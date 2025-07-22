@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Llama Flask App</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #254c74 0%, #aab8c7 100%);
+            min-height: 100vh;
+        }
+        .llama-card {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+            padding: 2rem;
+            margin-top: 4rem;
+        }
+        .btn-primary {
+            background: linear-gradient(90deg, #6c63ff 0%, #48c6ef 100%);
+            border: none;
+        }
+        .btn-primary:hover {
+            background: linear-gradient(90deg, #48c6ef 0%, #6c63ff 100%);
+        }
+        #response {
+            background: #f1f3f6;
+            border-radius: 8px;
+            min-height: 80px;
+            font-size: 1.1rem;
+        }
+        h1 {
+            font-weight: 700;
+            color: #6c63ff;
+        }
+        label {
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="llama-card mx-auto" style="max-width: 600px;">
+            <h1 class="text-center mb-4">Generador de Texto con Llama</h1>
+            <form id="promptForm">
+                <div class="form-group">
+                    <label for="prompt">Introduce tu prompt:</label>
+                    <textarea id="prompt" class="form-control" rows="3" required placeholder="Escribe aquí tu pregunta o idea..."></textarea>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary px-5">Generar</button>
+                </div>
+            </form>
+            <h4 class="mt-5">Respuesta:</h4>
+            <div id="response" class="border p-3"></div>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('promptForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            const prompt = document.getElementById('prompt').value;
+            document.getElementById('response').innerText = "Generando respuesta...";
+
+            fetch('/generate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ prompt: prompt })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('response').innerText = data.response || data.error;
+            })
+            .catch(error => {
+                document.getElementById('response').innerText = 'Error: ' + error;
+            });
+        });
+    </script>
+</body>
+</html>
